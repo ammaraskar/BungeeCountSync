@@ -29,6 +29,7 @@ public class BungeeCountSync extends Plugin implements Listener {
             this.loadConfig();
         } catch (Throwable t) {
             t.printStackTrace();
+            throw new RuntimeException(); // toss out an exception to make bungee not touch the plugin
         }
     }
 
@@ -43,6 +44,7 @@ public class BungeeCountSync extends Plugin implements Listener {
 
         File exampleConfig = new File(this.getDataFolder(), "example_config.yml");
         if (!exampleConfig.exists()) {
+            exampleConfig.createNewFile();
             InputStream in = this.getResourceAsStream("example_config.yml");
             OutputStream out = new FileOutputStream(exampleConfig);
             byte[] buf = new byte[1024];
