@@ -1,0 +1,5 @@
+name: ${project.groupId}
+version: ${project.version}
+main: com.ammaraskar.bungeesync.BungeeCountSync
+
+author: ammar2

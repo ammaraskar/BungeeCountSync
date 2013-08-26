@@ -1,0 +1,16 @@
+# ===============
+#
+# Yo fix this up
+# and rename this file to config.yml
+#
+# ===============
+
+server: bungee01AlphaSuperExtremeDawg
+
+countMethod: mysql
+mysql:
+  host: localhost
+  port: 3306
+  database: bungee
+  user: bungee
+  password: lolk
