@@ -37,6 +37,10 @@ public class BungeeCountSync extends Plugin implements Listener {
     }
 
     private void loadConfig() throws IOException, SQLException, ClassNotFoundException {
+        if (!this.getDataFolder().exists()) {
+            this.getDataFolder().mkdir();
+        }
+
         File exampleConfig = new File(this.getDataFolder(), "example_config.yml");
         if (!exampleConfig.exists()) {
             InputStream in = this.getResourceAsStream("example_config.yml");
