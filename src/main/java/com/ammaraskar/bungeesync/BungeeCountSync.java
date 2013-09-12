@@ -36,6 +36,10 @@ public class BungeeCountSync extends Plugin implements Listener {
     public String getServerName() {
         return this.server;
     }
+    
+    public ServerCountProvider getServerCountProvider() {
+        return this.countProvider;
+    }
 
     private void loadConfig() throws IOException, SQLException, ClassNotFoundException {
         if (!this.getDataFolder().exists()) {
