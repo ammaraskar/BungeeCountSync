@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 public class SQLCountProvider implements ServerCountProvider, Runnable {
 
     public static final String TABLE_NAME = "bungee_player_count";
-
     private BungeeCountSync plugin;
     private Connection connection;
     private int count;
@@ -59,8 +58,8 @@ public class SQLCountProvider implements ServerCountProvider, Runnable {
             e.printStackTrace();
         }
 
-        sql = "INSERT INTO `" + TABLE_NAME + "` (`server`, `count`) VALUES(?, ?) " +
-                "ON DUPLICATE KEY UPDATE `count`=?";
+        sql = "INSERT INTO `" + TABLE_NAME + "` (`server`, `count`) VALUES(?, ?) "
+                + "ON DUPLICATE KEY UPDATE `count`=?";
         try (PreparedStatement ps = this.connection.prepareStatement(sql)) {
             ps.setString(1, plugin.getServerName());
             ps.setInt(2, plugin.getProxy().getOnlineCount());
@@ -71,12 +70,10 @@ public class SQLCountProvider implements ServerCountProvider, Runnable {
             e.printStackTrace();
         }
     }
-
-    private static final String create = "CREATE TABLE IF NOT EXISTS `" + TABLE_NAME + "` (" +
-            "  `server` varchar(200) NOT NULL DEFAULT ''," +
-            "  `count` int(11)," +
-            "  `lastUpdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP," +
-            "  PRIMARY KEY (`server`)" +
-            "  ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;";
-
+    private static final String create = "CREATE TABLE IF NOT EXISTS `" + TABLE_NAME + "` ("
+            + "  `server` varchar(200) NOT NULL DEFAULT '',"
+            + "  `count` int(11),"
+            + "  `lastUpdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,"
+            + "  PRIMARY KEY (`server`)"
+            + "  ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;";
 }

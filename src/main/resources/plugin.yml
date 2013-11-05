@@ -1,4 +1,4 @@
-name: ${project.groupId}
+name: ${project.name}
 version: ${project.version}
 main: com.ammaraskar.bungeesync.BungeeCountSync
 
