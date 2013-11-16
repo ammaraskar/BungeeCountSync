@@ -1,12 +1,5 @@
 package com.ammaraskar.bungeesync;
 
-import net.md_5.bungee.api.ServerPing;
-import net.md_5.bungee.api.event.ProxyPingEvent;
-import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.event.EventHandler;
-import org.yaml.snakeyaml.Yaml;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,6 +8,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.logging.Level;
+import net.md_5.bungee.api.ServerPing;
+import net.md_5.bungee.api.event.ProxyPingEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.event.EventHandler;
+import org.yaml.snakeyaml.Yaml;
 
 public class BungeeCountSync extends Plugin implements Listener {
 
@@ -27,16 +27,16 @@ public class BungeeCountSync extends Plugin implements Listener {
 
         try {
             this.loadConfig();
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RuntimeException(); // toss out an exception to make bungee not touch the plugin
+        } catch (IOException | SQLException | ClassNotFoundException | RuntimeException ex) {
+            getLogger().log(Level.WARNING, "Failed to load configuration.", ex);
+            throw new RuntimeException("Failed to start BungeeCountSync", ex);
         }
     }
 
     public String getServerName() {
         return this.server;
     }
-    
+
     public ServerCountProvider getServerCountProvider() {
         return this.countProvider;
     }
@@ -49,15 +49,13 @@ public class BungeeCountSync extends Plugin implements Listener {
         File exampleConfig = new File(this.getDataFolder(), "example_config.yml");
         if (!exampleConfig.exists()) {
             exampleConfig.createNewFile();
-            InputStream in = this.getResourceAsStream("example_config.yml");
-            OutputStream out = new FileOutputStream(exampleConfig);
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
+            try (InputStream in = this.getResourceAsStream("example_config.yml"); OutputStream out = new FileOutputStream(exampleConfig)) {
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
             }
-            out.close();
-            in.close();
         }
 
         File file = new File(this.getDataFolder() + File.separator + "config.yml");
@@ -78,10 +76,8 @@ public class BungeeCountSync extends Plugin implements Listener {
 
     @EventHandler
     public void onPing(ProxyPingEvent event) {
-        ServerPing old = event.getResponse();
-
+        ServerPing response = event.getResponse();
         int players = this.countProvider.getTotalCount(this.getProxy().getOnlineCount());
-        ServerPing newRepsonse = new ServerPing(old.getProtocolVersion(), old.getGameVersion(), old.getMotd(), players, old.getMaxPlayers());
-        event.setResponse(newRepsonse);
+        response.setPlayers(new ServerPing.Players(response.getPlayers().getMax(), players, new ServerPing.PlayerInfo[]{}));
     }
 }
